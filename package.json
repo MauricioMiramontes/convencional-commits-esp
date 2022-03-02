@@ -1,0 +1,33 @@
+{
+  "name": "convencional-commits-esp",
+  "version": "1.0.0",
+  "description": "Configuracion para agregar commits convencionales a un proyecto",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MauricioMiramontes/convencional-commits-esp.git"
+  },
+  "keywords": [
+    "convencional",
+    "commits",
+    "español"
+  ],
+  "contributors":[
+    {
+      "name": "Mauricio Miramontes",
+      "email": "mauricio.miramontes@televisatim.com",
+      "url": "https://mauriciomiramontes.github.io/react-portfolio/"
+    },
+    {
+      "name": "Carina Jiménez García",
+      "email": "carina.jimenez@televisatim.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MauricioMiramontes/convencional-commits-esp/issues"
+  },
+  "homepage": "https://github.com/MauricioMiramontes/convencional-commits-esp#readme"
+}
