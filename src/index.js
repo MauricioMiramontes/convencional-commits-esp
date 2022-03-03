@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 const {exec} = require('child_process');
+const {readFileSync, writeFileSync} = require('fs');
 
-const Dependencies = [
-    "@commitlint/config-conventional",
-    "@commitlint/cli",
+const DEPENDENCIES = [
+    "@commitlint/config-conventional @commitlint/cli",
     "eslint",
     "husky",
     "lint-staged",
@@ -11,56 +11,61 @@ const Dependencies = [
 ];
 
 const HuskyScripts = [
-    ".husky/commit-msg 'npx --no-install commitlint --edit'",
-    ".husky/pre-commit 'npm run pre-commit'",
+    "npx husky set .husky/pre-commit 'npm run pre-commit'",
+    "npx husky add .husky/commit-msg 'npx --no-install commitlint --edit'"
 ]
 
-async function InstallDependencies() {
-    console.log("Iniciando instalacion de dependencias...");
-    for await (let dependencia of Dependencies) {
-        console.log("Instalando dependencia: " + dependencia);
-        exec("sudo npm install --save-dev" + dependencia, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`exec error: ${error}`);
-                return;
-            }
-            console.log(`${stdout}`);
-        })
-    }
-    exec("npm install -g commitizen" , (error, stdout, stderr) => {
+function InitHusky() {
+    console.log("Iniciando Husky...");
+    exec("npx husky-init", (error, stdout, stderr) => {
         if (error) {
             console.error(`exec error: ${error}`);
             return;
         }
         console.log(`${stdout}`);
+        console.log("Husky iniciado correctamente!");
+        CreateHuskyHooks();
     })
 }
 
-async function CreateHuskyHooks() {
-    console.log("Creando hooks de husky...");
-    await exec("npx husky-init", (error, stdout, stderr) => {
+function InstallDependencies() {
+    console.log("Iniciando instalacion de dependencias...");
+    exec(`yarn add ${DEPENDENCIES.join(" ")} --dev; yarn global add commitizen` , (error, stdout, stderr) => {
+        if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+        }
+        console.log(`${stdout}`);
+        InitHusky();
+    })
+}
+
+
+function CreateHuskyHooks() {
+    console.log("Creando hooks de Husky...");
+    exec(`${HuskyScripts.join("; ")}`, 
+    (error, stdout, stderr) => {
         if (error) {
             console.error(`exec error: ${error}`);
             return;
         }
         console.log(`${stdout}`);
     })
-    // "prepare": "husky install"
-    for(let script of HuskyScripts) {
-        exec("npx husky add " + script, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`exec error: ${error}`);
-                return;
-            }
-            console.log(`${stdout}`);
-        })
+  
+    const str = readFileSync('./package.json', 'utf-8')
+    let pkg = JSON.parse(str)
+    pkg.scripts ||= {}
+    if (pkg.scripts['pre-commit'] !== undefined) console.log("El comando pre-commit ya existe en el package.json");
+    else {
+        console.log(`Creando comando pre-commit en el package.json`);
+        pkg.scripts['pre-commit'] = 'lint-staged'
     }
-
+    writeFileSync('./package.json', JSON.stringify(pkg, null, 2))
 }
 
 function main() {
     console.log("Iniciando instalacion de commits convencionales en el repositorio actual...");
-    InstallDependencies().then(CreateHuskyHooks())
+    InstallDependencies();
 }
 
 if (require.main === module) {
