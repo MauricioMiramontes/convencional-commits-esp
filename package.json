@@ -30,27 +30,5 @@
   "homepage": "https://github.com/MauricioMiramontes/convencional-commits-esp#readme",
   "bin": {
     "convencional-commits-esp": "src/index.js"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^16.2.1",
-    "@commitlint/config-conventional": "^16.2.1",
-    "eslint": "^8.10.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.29.3",
-    "eslint-plugin-react-hooks": "^4.3.0",
-    "husky": "^7.0.0",
-    "lint-staged": "^12.3.5",
-    "prettier": "^2.5.1",
-    "standard-version": "^9.3.2"
-  },
-  "scripts": {
-    "prepare": "husky install",
-    "pre-commit": "lint-staged",
-    "release:beta": "standar-version -- --prerelease beta",
-    "release": "standard-version"
   }
 }

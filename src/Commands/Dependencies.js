@@ -1,4 +1,4 @@
-const DEPENDENCIES = [
+module.exports = [
     "@commitlint/config-conventional @commitlint/cli",
     "eslint",
     "husky",
@@ -12,6 +12,5 @@ const DEPENDENCIES = [
     "eslint-plugin-prettier",
     "eslint-plugin-react",
     "eslint-plugin-react-hooks",
+    // aqui ira nuestro paquete de configuracion de Commitizen
 ];
-
-exports.DEPENDENCIES = DEPENDENCIES;
