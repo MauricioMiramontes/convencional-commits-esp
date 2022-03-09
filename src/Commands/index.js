@@ -1,9 +1,21 @@
-const Dependencies = require("./Dependencies.js");
-const HuskyScripts = require("./husky.js");
+const Dependencies = require("./Dependencies");
+const HuskyScripts = require("./husky");
 
 module.exports = {
-    install: `yarn add ${Dependencies.join(" ")} --dev`,
-    installComitizen: "sudo yarn global add commitizen",
-    initHusky: "npx husky-init",
-    createHuskyHooks: `${HuskyScripts.join("; ")}`,
+    install: {
+        command: `yarn add ${Dependencies.join(" ")} --dev`,
+        message: "Iniciando instalación de dependencias...",
+    },
+    installComitizen: {
+        command: "sudo yarn global add commitizen",
+        message: "Iniciando instalación de Commitizen...",
+    },
+    initHusky: {
+        command: "npx husky-init",
+        message: "Iniciando instalación de Husky...",
+    },
+    createHuskyHooks: {
+        command: `${HuskyScripts.join("; ")}`,
+        message: "Iniciando creación de hooks de Husky...",
+    },
 };

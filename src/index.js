@@ -1,97 +1,96 @@
 #!/usr/bin/env node
+/* eslint-disable no-await-in-loop */
+/* eslint-disable guard-for-in */
 /* eslint-disable no-console */
-const { exec } = require("child_process");
+/* eslint-disable no-restricted-syntax */
 const { readFileSync, writeFileSync, appendFile } = require("fs");
+const { promisify } = require("util");
+const { exec } = require("child_process");
+
+const execute = promisify(exec);
+
 const { CONFIG_FILES } = require("./Configs/index");
-const { install, installComitizen, initHusky, createHuskyHooks }  = require("./Commands/index");
+const COMMANDS = require("./Commands/index");
+const SCRIPTS = require("./Configs/Scripts.json");
 
-// function CreateConfigFiles() {
-//     console.log("Creando archivos de configuracion...");
-//     for (let i = 0; i < CONFIG_FILES.length; i += 1) {
-//         const { name, data, stringify } = CONFIG_FILES[i];
-//         appendFile(name, stringify ? JSON.stringify(data) : data, (err) => {
-//             if (err) throw err;
-//             console.log(`Archivo ${name} creado correctamente!`);
-//         });
-//     }
-// }
-
-// function CreateScripts() {
-//     console.log("Creando scripts...");
-//     let str = "";
-//     try {
-//         str = readFileSync("./package.json", "utf-8");
-//     } catch (e) {
-//         console.log("No se encontro el archivo package.json, porfavor asegurate de estar en la raiz del proyecto");
-//         return;
-//     }
-//     const pkg = JSON.parse(str);
-
-//     const scipt = pkg.scripts.length !== 0 ? pkg.scripts : {};
-
-//     if (scipt["pre-commit"] !== undefined) console.log("El comando pre-commit ya existe en el package.json");
-//     else {
-//         console.log("Creando comando pre-commit en el package.json");
-//         scipt["pre-commit"] = "lint-staged";
-//     }
-//     if (scipt["release:beta"] !== undefined) console.log("El comando release:beta ya existe en el package.json");
-//     else {
-//         console.log("Creando comando release:beta en el package.json");
-//         scipt["release:beta"] = "standar-version -- --prerelease beta";
-//     }
-//     if (scipt.release !== undefined) console.log("El comando release ya existe en el package.json");
-//     else {
-//         console.log("Creando comando release en el package.json");
-//         scipt.release = "standard-version";
-//     }
-//     writeFileSync("./package.json", JSON.stringify(pkg, null, 2));
-//     CreateConfigFiles();
-// }
-
-const executeCommand = (command, msg) =>
-  new Promise((resolve, reject) => {
-    console.log(msg);
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`error: ${error}`);
-        resolve(false);
-      }
-      if (stderr) {
-        console.error(`${stderr}`);
-        resolve(false);
-      }
-      console.log(stdout);
-      resolve(true);
-    });
-  });
-
-function main() {
-  console.log(
-    "Iniciando instalacion de commits convencionales en el repositorio actual..."
-  );
-  executeCommand(install, "Iniciando instalación de dependencias...")
-    .then((installResponse) => {
-      if (installResponse) {
-        executeCommand(installComitizen, "Iniciando instalación de Commitizen...")
-        .then((installCommitizenResponse) => {
-            if (installCommitizenResponse) {
-                executeCommand(initHusky, "Iniciando instalación de Husky...")
-                .then((initHuskyResponse) => {
-                    if (initHuskyResponse) {
-                        executeCommand(createHuskyHooks, "Iniciando creación de hooks de Husky...")
-                        .then((createHuskyHooksResponse) => {
-                            if (createHuskyHooksResponse) {
-                                console.log('exito');
-                            }
-                        });
-                    }
-                });
-            }
+/* Se crean los archivos de configuración de: eslintrc, eslintignore, prettierrc y lintstagedrc. */
+const CreateConfigFiles = () => {
+    console.log("Creando archivos de configuración...");
+    for (const key in CONFIG_FILES) {
+        const { name, data, stringify } = CONFIG_FILES[key];
+        const FILE_CONTENT = stringify ? JSON.stringify(data) : data;
+        appendFile(name, FILE_CONTENT, (error) => {
+            if (error) throw error;
+            console.log(`Archivo ${name} creado correctamente!`);
         });
     }
-    });
-}
+};
+
+/*  Carga y retorna un archivo JSON dada una ruta valida */
+const loadFile = (filePath) => {
+    let contentFile = "";
+    try {
+        contentFile = readFileSync(filePath, "utf-8");
+        contentFile = JSON.parse(contentFile);
+    } catch (error) {
+        console.log("No se encontro el archivo package.json, porfavor asegurate de estar en la raiz del proyecto");
+    }
+    return contentFile;
+};
+
+/* Agrega dentro del archivo package.json los scripts que se encuentran en el archivo Configs/Scripts.js */
+const CreateScripts = () => {
+    console.log("Creando scripts...");
+    const contentPackage = loadFile("./package.json");
+    if (contentPackage) {
+        const { scripts = {} } = contentPackage;
+        for (const key in SCRIPTS) {
+            const COMMAND = SCRIPTS[key];
+            if (!scripts[key]) {
+                console.log(`Creando comando ${key} en el package.json`);
+                scripts[key] = COMMAND;
+            }
+        }
+        Object.assign(contentPackage, { scripts });
+        const FILE_CONTENT = JSON.stringify(contentPackage, "", 4);
+        writeFileSync("./package.json", FILE_CONTENT);
+    }
+};
+
+/* Se ejecuta en consola un comando dado por parametro  */
+const executeCommand = async (command, message) => {
+    console.info(message);
+    let responseCommand = false;
+    try {
+        const { stdout, stderr } = await execute(command);
+        const RESPONSE = stdout || stderr;
+        console.log(RESPONSE);
+        responseCommand = true;
+    } catch (NotifyErrorCommand) {
+        console.error(NotifyErrorCommand.message);
+    }
+    return responseCommand;
+};
+
+/* 
+    - Se inicia la instalación de las dependencias y commitizen.
+    - Se inicia las configuraciónes de Husky, creando sus hooks.
+    - Se mandan a llamar las funciones de CreateScripts() y CreateConfigFiles()
+*/
+const main = async () => {
+    console.log("Iniciando instalación de commits convencionales en el repositorio actual...");
+    for (const key in COMMANDS) {
+        const { command, message } = COMMANDS[key];
+        const EXECUTE = await executeCommand(command, message);
+        if (!EXECUTE) {
+            console.error(`Imposible ejecutar el commando ${command}`);
+            break;
+        }
+    }
+    CreateScripts();
+    CreateConfigFiles();
+};
 
 if (require.main === module) {
-  main();
+    main();
 }
