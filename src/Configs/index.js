@@ -1,6 +1,7 @@
 const { ESLINT_CONFIG, ESLINT_IGNORE } = require("./ESLint");
 const { PRETTIER_RC } = require("./Prettierrc");
 const { LINTSTAGEDRC } = require("./Lintstagedrc");
+const { EDITOR_CONFIG } = require("./Editorconfig");
 
 exports.CONFIG_FILES = [
     {
@@ -22,5 +23,10 @@ exports.CONFIG_FILES = [
         name: ".lintstagedrc",
         data: LINTSTAGEDRC,
         stringify: true,
+    },
+    {
+        name: ".editorconfig",
+        data: EDITOR_CONFIG,
+        stringify: false,
     },
 ];
