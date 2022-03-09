@@ -51,6 +51,30 @@ const loadFile = (filePath) => {
 };
 
 /**
+ * Agrega dentro del archivo package.json la ruta para la configuración de commitizen.
+ * Esta funcion estara comentada hasta que se haya publicado el paquete cz-configuraciones-es
+ *
+ * @return {void}
+ */
+
+// const CreateCommitizenConfig = () => {
+//     console.log("Agregando configuracion de Commitizen al package.json...");
+//     const contentPackage = loadFile("./package.json");
+//     if (contentPackage) {
+//         const { config = {} } = contentPackage;
+//         const { commitizen = {} } = config;
+//         let { path = "" } = commitizen;
+//         if (!path) {
+//             path = "./node_modules/cz-configuracion-es";
+//         }
+//         const COMMITIZEN_CONFIG = { config: { commitizen: { path } } };
+//         Object.assign(contentPackage, COMMITIZEN_CONFIG);
+//         const FILE_CONTENT = JSON.stringify(contentPackage, "", 4);
+//         writeFileSync("./package.json", FILE_CONTENT);
+//     }
+// };
+
+/**
  * Agrega dentro del archivo package.json los scripts que se encuentran en el archivo Configs/Scripts.js
  *
  * @return {void}
@@ -112,6 +136,7 @@ const main = async () => {
             break;
         }
     }
+    // CreateCommitizenConfig();
     CreateScripts();
     CreateConfigFiles();
 };
