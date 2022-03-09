@@ -1,4 +1,4 @@
-const ESLINT_CONFIG = {
+exports.ESLINT_CONFIG = {
     env: {
         browser: true,
         es2021: true,
@@ -29,13 +29,10 @@ const ESLINT_CONFIG = {
     },
 };
 
-const ESLINT_IGNORE = `/.vscode
+exports.ESLINT_IGNORE = `/.vscode
 /.next
 /dist
 /node_modules
 eslintFormat.js
 /reports
 /public`;
-
-exports.ESLINT_CONFIG = ESLINT_CONFIG;
-exports.ESLINT_IGNORE = ESLINT_IGNORE;

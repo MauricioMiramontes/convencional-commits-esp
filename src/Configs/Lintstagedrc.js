@@ -1,5 +1,3 @@
-const LINTSTAGEDRC = {
+exports.LINTSTAGEDRC = {
     "*.js": ["eslint"],
 };
-
-exports.LINTSTAGEDRC = LINTSTAGEDRC;

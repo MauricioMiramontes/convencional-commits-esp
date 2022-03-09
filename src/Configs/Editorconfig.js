@@ -1,4 +1,4 @@
-const EDITOR_CONFIG = `root = true
+exports.EDITOR_CONFIG = `root = true
 
 [*]
 indent_style = space
@@ -13,5 +13,3 @@ indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false`;
-
-exports.EDITOR_CONFIG = EDITOR_CONFIG;

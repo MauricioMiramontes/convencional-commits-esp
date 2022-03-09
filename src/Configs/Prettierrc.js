@@ -1,4 +1,4 @@
-const PRETTIER_RC = {
+exports.PRETTIER_RC = {
     arrowParens: "always",
     bracketSpacing: true,
     embeddedLanguageFormatting: "auto",
@@ -17,5 +17,3 @@ const PRETTIER_RC = {
     useTabs: false,
     vueIndentScriptAndStyle: false,
 };
-
-exports.PRETTIER_RC = PRETTIER_RC;
