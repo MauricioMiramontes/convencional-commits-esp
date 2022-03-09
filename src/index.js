@@ -13,7 +13,12 @@ const { CONFIG_FILES } = require("./Configs/index");
 const COMMANDS = require("./Commands/index");
 const SCRIPTS = require("./Configs/Scripts.json");
 
-/* Se crean los archivos de configuración de: eslintrc, eslintignore, prettierrc y lintstagedrc. */
+/**
+ * Se crean los archivos de configuración de: eslintrc, eslintignore, prettierrc y lintstagedrc.
+ *
+ * @return {void}
+ */
+
 const CreateConfigFiles = () => {
     console.log("Creando archivos de configuración...");
     for (const key in CONFIG_FILES) {
@@ -26,7 +31,14 @@ const CreateConfigFiles = () => {
     }
 };
 
-/*  Carga y retorna un archivo JSON dada una ruta valida */
+/**
+ *   Carga y retorna un archivo JSON dada una ruta valida
+ *
+ * @param {string} filePath Ruta del archivo JSON a abrir.
+ *
+ * @return {object} En caso de cumplir con la condición.
+ *
+ */
 const loadFile = (filePath) => {
     let contentFile = "";
     try {
@@ -38,7 +50,11 @@ const loadFile = (filePath) => {
     return contentFile;
 };
 
-/* Agrega dentro del archivo package.json los scripts que se encuentran en el archivo Configs/Scripts.js */
+/**
+ * Agrega dentro del archivo package.json los scripts que se encuentran en el archivo Configs/Scripts.js
+ *
+ * @return {void}
+ */
 const CreateScripts = () => {
     console.log("Creando scripts...");
     const contentPackage = loadFile("./package.json");
@@ -57,7 +73,14 @@ const CreateScripts = () => {
     }
 };
 
-/* Se ejecuta en consola un comando dado por parametro  */
+/**
+ * Se ejecuta en consola un comando dado por parámetro.
+ *
+ * @param {string} command  Comandos a ejecutar.
+ * @param {string} message  Mensaje personalizado.
+ *
+ * @return {boolean}
+ */
 const executeCommand = async (command, message) => {
     console.info(message);
     let responseCommand = false;
@@ -72,11 +95,13 @@ const executeCommand = async (command, message) => {
     return responseCommand;
 };
 
-/* 
-    - Se inicia la instalación de las dependencias y commitizen.
-    - Se inicia las configuraciónes de Husky, creando sus hooks.
-    - Se mandan a llamar las funciones de CreateScripts() y CreateConfigFiles()
-*/
+/**
+ * Se inicia la instalacion de las dependencias de la aplicación.
+ * Se hace la iniciacion de Huksy y la creacion de los scripts y archivos de configuración.
+ *
+ * @return {void}
+ *
+ */
 const main = async () => {
     console.log("Iniciando instalación de commits convencionales en el repositorio actual...");
     for (const key in COMMANDS) {
