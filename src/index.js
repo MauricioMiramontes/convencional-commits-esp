@@ -3,7 +3,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-console */
 /* eslint-disable no-restricted-syntax */
-const { readFileSync, writeFileSync, appendFile } = require("fs");
+const { readFileSync, writeFileSync, appendFile, existsSync } = require("fs");
 const { promisify } = require("util");
 const { exec } = require("child_process");
 
@@ -24,10 +24,14 @@ const CreateConfigFiles = () => {
     for (const key in CONFIG_FILES) {
         const { name, data, stringify } = CONFIG_FILES[key];
         const FILE_CONTENT = stringify ? JSON.stringify(data) : data;
-        appendFile(name, FILE_CONTENT, (error) => {
-            if (error) throw error;
-            console.log(`Archivo ${name} creado correctamente!`);
-        });
+        if (!existsSync(name)) {
+            appendFile(name, FILE_CONTENT, (error) => {
+                if (error) throw error;
+                console.log(`Archivo ${name} creado correctamente!`);
+            });
+        } else {
+            console.log(`Archivo ${name} ya existe!`);
+        }
     }
 };
 
@@ -57,22 +61,20 @@ const loadFile = (filePath) => {
  * @return {void}
  */
 
-// const CreateCommitizenConfig = () => {
-//     console.log("Agregando configuracion de Commitizen al package.json...");
-//     const contentPackage = loadFile("./package.json");
-//     if (contentPackage) {
-//         const { config = {} } = contentPackage;
-//         const { commitizen = {} } = config;
-//         let { path = "" } = commitizen;
-//         if (!path) {
-//             path = "./node_modules/cz-configuracion-es";
-//         }
-//         const COMMITIZEN_CONFIG = { config: { commitizen: { path } } };
-//         Object.assign(contentPackage, COMMITIZEN_CONFIG);
-//         const FILE_CONTENT = JSON.stringify(contentPackage, "", 4);
-//         writeFileSync("./package.json", FILE_CONTENT);
-//     }
-// };
+const CreateCommitizenConfig = () => {
+    console.log("Agregando configuracion de Commitizen al package.json...");
+    const contentPackage = loadFile("./package.json");
+    if (contentPackage) {
+        const { config = {} } = contentPackage;
+        const { commitizen = {} } = config;
+        let { path = "" } = commitizen;
+        path = "./node_modules/cz-configuracion-es";
+        const COMMITIZEN_CONFIG = { config: { commitizen: { path } } };
+        Object.assign(contentPackage, COMMITIZEN_CONFIG);
+        const FILE_CONTENT = JSON.stringify(contentPackage, "", 4);
+        writeFileSync("./package.json", FILE_CONTENT);
+    }
+};
 
 /**
  * Agrega dentro del archivo package.json los scripts que se encuentran en el archivo Configs/Scripts.js
@@ -136,7 +138,7 @@ const main = async () => {
             break;
         }
     }
-    // CreateCommitizenConfig();
+    CreateCommitizenConfig();
     CreateScripts();
     CreateConfigFiles();
 };
