@@ -68,7 +68,7 @@ const CreateCommitizenConfig = () => {
         const { config = {} } = contentPackage;
         const { commitizen = {} } = config;
         let { path = "" } = commitizen;
-        path = "./node_modules/cz-configuracion-es";
+        path = "./node_modules/@televisa-digital/cz-configuration";
         const COMMITIZEN_CONFIG = { config: { commitizen: { path } } };
         Object.assign(contentPackage, COMMITIZEN_CONFIG);
         const FILE_CONTENT = JSON.stringify(contentPackage, "", 4);
