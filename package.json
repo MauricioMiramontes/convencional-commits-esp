@@ -1,6 +1,6 @@
 {
     "name": "convencional-commits-esp",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Configuracion para agregar commits convencionales a un proyecto",
     "main": "index.js",
     "repository": {
